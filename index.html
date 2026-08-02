@@ -248,15 +248,25 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
 <script>
 // ─── DATOS ───
 const DEFAULT_CABANAS = [
-  {id:1, name:'Cabaña Estándar', price:45000, desc:'1 habitación, cocina, baño privado. Vista al jardín.', emoji:'🏡', tags:'🛏️ 2 pers,🍳 Cocina,📶 WiFi', addons:'Desayuno:5000;Tinaja:8000'},
-  {id:2, name:'Cabaña Pareja', price:59000, desc:'Cama king, terraza privada, tinaja incluida. La más pedida.', emoji:'💑', tags:'🛏️ 2 pers,🛁 Tinaja,🌅 Terraza', addons:'Desayuno:5000;Botella Vino:12000'},
-  {id:3, name:'Cabaña Familiar', price:75000, desc:'2 habitaciones, living grande, terraza. Hasta 5 personas.', emoji:'👨‍👩‍👧‍👦', tags:'🛏️ 5 pers,🍳 Cocina,📺 TV', addons:'Desayuno x2:8000;Limpieza extra:10000'},
-  {id:4, name:'Cabaña Premium', price:95000, desc:'2 pisos, ventanal al mar, chimenea. La mejor experiencia.', emoji:'🌟', tags:'🛏️ 4 pers,🔥 Chimenea,🌊 Vista mar', addons:'Desayuno premium:10000;Masaje:25000'}
+  {id:1, name:'Cabaña Estándar', price:45000, desc:'1 habitación, cocina, baño privado. Vista al jardín.', emoji:'🏡', tags:'🛏️ 2 pers,🍳 Cocina,📶 WiFi', addons:'Desayuno:5000;Tinaja:8000',
+   images:['https://picsum.photos/seed/cab1a/400/300','https://picsum.photos/seed/cab1b/400/300','https://picsum.photos/seed/cab1c/400/300','https://picsum.photos/seed/cab1d/400/300','https://picsum.photos/seed/cab1e/400/300']},
+  {id:2, name:'Cabaña Pareja', price:59000, desc:'Cama king, terraza privada, tinaja incluida. La más pedida.', emoji:'💑', tags:'🛏️ 2 pers,🛁 Tinaja,🌅 Terraza', addons:'Desayuno:5000;Botella Vino:12000',
+   images:['https://picsum.photos/seed/cab2a/400/300','https://picsum.photos/seed/cab2b/400/300','https://picsum.photos/seed/cab2c/400/300','https://picsum.photos/seed/cab2d/400/300','https://picsum.photos/seed/cab2e/400/300']},
+  {id:3, name:'Cabaña Familiar', price:75000, desc:'2 habitaciones, living grande, terraza. Hasta 5 personas.', emoji:'👨‍👩‍👧‍👦', tags:'🛏️ 5 pers,🍳 Cocina,📺 TV', addons:'Desayuno x2:8000;Limpieza extra:10000',
+   images:['https://picsum.photos/seed/cab3a/400/300','https://picsum.photos/seed/cab3b/400/300','https://picsum.photos/seed/cab3c/400/300','https://picsum.photos/seed/cab3d/400/300','https://picsum.photos/seed/cab3e/400/300']},
+  {id:4, name:'Cabaña Premium', price:95000, desc:'2 pisos, ventanal al mar, chimenea. La mejor experiencia.', emoji:'🌟', tags:'🛏️ 4 pers,🔥 Chimenea,🌊 Vista mar', addons:'Desayuno premium:10000;Masaje:25000',
+   images:['https://picsum.photos/seed/cab4a/400/300','https://picsum.photos/seed/cab4b/400/300','https://picsum.photos/seed/cab4c/400/300','https://picsum.photos/seed/cab4d/400/300','https://picsum.photos/seed/cab4e/400/300']}
 ];
 
 function loadCabanas() {
   const saved = localStorage.getItem('cabanas_data');
-  return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_CABANAS));
+  const version = localStorage.getItem('cabanas_version');
+  if (saved && version === '2') return JSON.parse(saved);
+  // Primera carga o upgrade: usar defaults con imágenes
+  const data = JSON.parse(JSON.stringify(DEFAULT_CABANAS));
+  localStorage.setItem('cabanas_data', JSON.stringify(data));
+  localStorage.setItem('cabanas_version', '2');
+  return data;
 }
 function saveCabanas(data) { localStorage.setItem('cabanas_data', JSON.stringify(data)); }
 
