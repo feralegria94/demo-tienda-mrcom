@@ -18,9 +18,22 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
 .nc{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1100px;margin:0 auto;padding:0 1.5rem}
 .nl{font-size:1rem;font-weight:800;color:var(--t);text-decoration:none;font-family:var(--fd);letter-spacing:-.3px}
 .nl span{background:var(--gh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cart-btn{position:relative;background:var(--s);border:1px solid var(--b);border-radius:8px;padding:.4rem .8rem;color:var(--t);font-size:.72rem;font-weight:600;cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:.4rem}
+.cart-btn{position:relative;background:var(--s);border:1px solid var(--b);border-radius:8px;padding:.4rem .8rem;color:var(--t);font-size:.72rem;font-weight:600;cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:.4rem;margin-right:.5rem}
 .cart-btn:hover{background:var(--s2);border-color:var(--ba)}
 .cart-count{background:var(--r);color:#fff;font-size:.55rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.nav-actions{display:flex;align-items:center;gap:.5rem}
+.login-btn{background:transparent;border:1px solid var(--bh);border-radius:8px;padding:.35rem .7rem;color:var(--t2);font-size:.68rem;font-weight:600;cursor:pointer;transition:var(--tr);font-family:var(--fb)}
+.login-btn:hover{background:var(--s);color:var(--t);border-color:var(--t4)}
+.login-btn.admin{background:rgba(13,148,136,.15);border-color:var(--ba);color:var(--r)}
+
+/* Admin panel */
+.admin-bar{display:none;background:rgba(13,148,136,.1);border-bottom:1px solid var(--ba);padding:.4rem 1.5rem;font-size:.6rem;color:var(--r);text-align:center;font-weight:600}
+.admin-bar.show{display:block}
+.edit-btn{position:absolute;top:.4rem;left:.4rem;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.6rem;padding:.2rem .5rem;border-radius:6px;cursor:pointer;z-index:2;font-family:var(--fb);display:none}
+.edit-btn.show{display:block}
+.edit-btn:hover{background:var(--r)}
+
+@media(max-width:768px){.products{grid-template-columns:repeat(2,1fr)}.cart-panel{width:100%;right:-100%}.nav-actions{gap:.3rem}.cart-btn{padding:.35rem .6rem;font-size:.65rem}.login-btn{padding:.3rem .5rem;font-size:.6rem}}
 
 .sc{padding:5rem 1.5rem 2rem;max-width:1000px;margin:0 auto}
 .hero{padding:90px 1.5rem 2rem;text-align:center;max-width:700px;margin:0 auto}
@@ -78,9 +91,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
 <nav class="n">
   <div class="nc">
     <a href="#" class="nl">🏡 Cabañas <span>del Sur</span></a>
-    <button class="cart-btn" onclick="toggleCart()">🛒 Reservas <span class="cart-count" id="cartCount">0</span></button>
+    <div class="nav-actions">
+      <button class="cart-btn" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+      <button class="login-btn" id="loginBtn" onclick="toggleLogin()">🔐 Admin</button>
+    </div>
   </div>
 </nav>
+<div class="admin-bar" id="adminBar">⚙️ Modo administrador — Podés editar cabañas, precios y descripciones. <button onclick="logout()" style="background:none;border:none;color:var(--t);cursor:pointer;text-decoration:underline;font-size:.6rem">Cerrar sesión</button></div>
 
 <div class="hero">
   <h1>Reservá tu cabaña<br><em>en Chiloé</em></h1>
@@ -158,6 +175,40 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
   <p>Sitio web creado por <a href="https://mr.mrcomsoluciones.cl">MR.COM Soluciones</a> — Plan Tienda Online — Pago único desde $179.400</p>
 </footer>
 
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginOverlay" onclick="toggleLogin()"></div>
+<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:2rem;width:300px;display:none" id="loginModal">
+  <button style="position:absolute;top:.6rem;right:.6rem;background:none;border:none;color:var(--t3);font-size:1.1rem;cursor:pointer" onclick="toggleLogin()">✕</button>
+  <h3 style="font-size:.85rem;font-weight:700;font-family:var(--fd);margin-bottom:.8rem">🔐 Acceso Administrador</h3>
+  <input type="text" id="loginUser" placeholder="Usuario" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem;margin-bottom:.5rem">
+  <input type="password" id="loginPass" placeholder="Contraseña" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem;margin-bottom:.5rem">
+  <p id="loginError" style="font-size:.6rem;color:#EF4444;margin-bottom:.5rem;display:none">Credenciales incorrectas</p>
+  <button class="bt bt-p" style="width:100%;justify-content:center" onclick="doLogin()">Ingresar</button>
+  <p style="font-size:.55rem;color:var(--t4);margin-top:.5rem;text-align:center">Demo: usuario <strong>demo</strong> · contraseña <strong>demo123</strong></p>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="overlay" id="editOverlay" onclick="closeEdit()"></div>
+<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;background:var(--s);border:1px solid var(--b);border-radius:14px;padding:1.5rem;width:380px;max-height:90vh;overflow-y:auto;display:none" id="editModal">
+  <button style="position:absolute;top:.6rem;right:.6rem;background:none;border:none;color:var(--t3);font-size:1.1rem;cursor:pointer" onclick="closeEdit()">✕</button>
+  <h3 style="font-size:.85rem;font-weight:700;font-family:var(--fd);margin-bottom:1rem">✏️ Editar cabaña</h3>
+  <input type="hidden" id="editId">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Nombre</label>
+  <input type="text" id="editName" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Precio ($)</label>
+  <input type="number" id="editPrice" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Descripción</label>
+  <textarea id="editDesc" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem;height:60px;resize:vertical"></textarea>
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Emoji (ícono)</label>
+  <input type="text" id="editEmoji" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem" maxlength="4">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Tags (separados por coma)</label>
+  <input type="text" id="editTags" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Add-ons (nombre:precio;nombre:precio)</label>
+  <input type="text" id="editAddons" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem" placeholder="Desayuno:5000;Tinaja:8000">
+  <button class="bt bt-p" style="width:100%;justify-content:center;margin-top:1rem" onclick="saveEdit()">💾 Guardar cambios</button>
+  <button class="bt bt-o" style="width:100%;justify-content:center;margin-top:.4rem;color:#EF4444;border-color:rgba(239,68,68,.3)" onclick="deleteCabana()">🗑️ Eliminar cabaña</button>
+</div>
+
 <!-- CART PANEL -->
 <div class="overlay" id="overlay" onclick="toggleCart()"></div>
 <div class="cart-panel" id="cartPanel">
@@ -173,101 +224,228 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
 </div>
 
 <script>
-let cart = [];
-let totalNights = 1;
+// ─── DATOS ───
+const DEFAULT_CABANAS = [
+  {id:1, name:'Cabaña Estándar', price:45000, desc:'1 habitación, cocina, baño privado. Vista al jardín.', emoji:'🏡', tags:'🛏️ 2 pers,🍳 Cocina,📶 WiFi', addons:'Desayuno:5000;Tinaja:8000'},
+  {id:2, name:'Cabaña Pareja', price:59000, desc:'Cama king, terraza privada, tinaja incluida. La más pedida.', emoji:'💑', tags:'🛏️ 2 pers,🛁 Tinaja,🌅 Terraza', addons:'Desayuno:5000;Botella Vino:12000'},
+  {id:3, name:'Cabaña Familiar', price:75000, desc:'2 habitaciones, living grande, terraza. Hasta 5 personas.', emoji:'👨‍👩‍👧‍👦', tags:'🛏️ 5 pers,🍳 Cocina,📺 TV', addons:'Desayuno x2:8000;Limpieza extra:10000'},
+  {id:4, name:'Cabaña Premium', price:95000, desc:'2 pisos, ventanal al mar, chimenea. La mejor experiencia.', emoji:'🌟', tags:'🛏️ 4 pers,🔥 Chimenea,🌊 Vista mar', addons:'Desayuno premium:10000;Masaje:25000'}
+];
 
+function loadCabanas() {
+  const saved = localStorage.getItem('cabanas_data');
+  return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_CABANAS));
+}
+function saveCabanas(data) { localStorage.setItem('cabanas_data', JSON.stringify(data)); }
+
+let cabanas = loadCabanas();
+let cart = [];
+let isAdmin = sessionStorage.getItem('tienda_admin') === 'true';
+
+// ─── RENDER ───
+function renderProducts() {
+  const container = document.getElementById('products');
+  let html = '';
+  cabanas.forEach(c => {
+    const tags = c.tags.split(',').map(t => `<span>${t.trim()}</span>`).join('');
+    let addonsHtml = '';
+    if (c.addons) {
+      c.addons.split(';').forEach(a => {
+        const [name, price] = a.split(':');
+        if (name && price) addonsHtml += `<label><input type="checkbox" data-addon="${name.trim()}" data-price="${price.trim()}"> ${name.trim()} +$${parseInt(price).toLocaleString()}</label>`;
+      });
+    }
+    html += `
+      <div class="card" data-id="${c.id}">
+        ${isAdmin ? `<button class="edit-btn show" onclick="openEdit(${c.id})">✏️ Editar</button>` : ''}
+        <div class="card-img">${c.emoji}</div>
+        <div class="card-body">
+          <h3>${c.name}</h3>
+          <p>${c.desc}</p>
+          <div class="extras">${tags}</div>
+          <div class="price">$${c.price.toLocaleString()} <small>/ noche</small></div>
+          ${addonsHtml ? `<div class="card-addons">${addonsHtml}</div>` : ''}
+          <button class="bt bt-p" onclick="addToCart(this)">Agregar al carrito</button>
+        </div>
+      </div>`;
+  });
+  if (isAdmin) {
+    html += `<div class="card" style="border:2px dashed var(--ba);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:200px" onclick="addNewCabana()">
+      <div style="text-align:center;color:var(--t3)">
+        <div style="font-size:3rem">➕</div>
+        <div style="font-size:.75rem;font-weight:600;margin-top:.5rem">Agregar cabaña</div>
+      </div></div>`;
+  }
+  container.innerHTML = html;
+}
+
+// ─── CART ───
 function addToCart(btn) {
   const card = btn.closest('.card');
-  const id = card.dataset.id;
-  const name = card.dataset.name;
-  const basePrice = parseInt(card.dataset.price);
-  
+  const id = parseInt(card.dataset.id);
+  const c = cabanas.find(x => x.id === id);
+  if (!c) return;
   const addons = [];
   card.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
     addons.push({ name: cb.dataset.addon, price: parseInt(cb.dataset.price) });
     cb.checked = false;
   });
-  
   const addonTotal = addons.reduce((s, a) => s + a.price, 0);
-  
   cart.push({
-    id: Date.now(),
-    cabanaId: id,
-    name: name,
-    basePrice: basePrice,
-    addons: addons,
-    addonTotal: addonTotal,
-    nights: totalNights,
-    total: (basePrice + addonTotal) * totalNights
+    id: Date.now(), cabanaId: id, name: c.name, basePrice: c.price,
+    addons: addons, addonTotal: addonTotal, nights: 1,
+    total: (c.price + addonTotal)
   });
-  
   renderCart();
   btn.textContent = '✅ Agregado';
   setTimeout(() => btn.textContent = 'Agregar al carrito', 1200);
 }
-
-function removeItem(id) {
-  cart = cart.filter(item => item.id !== id);
-  renderCart();
-}
-
+function removeItem(id) { cart = cart.filter(item => item.id !== id); renderCart(); }
 function renderCart() {
   const container = document.getElementById('cartItems');
   const totalDiv = document.getElementById('cartTotal');
-  const countEl = document.getElementById('cartCount');
-  
-  countEl.textContent = cart.length;
-  
+  document.getElementById('cartCount').textContent = cart.length;
   if (cart.length === 0) {
     container.innerHTML = '<div class="cart-empty">Tu carrito está vacío.<br>Agregá cabañas para reservar.</div>';
-    totalDiv.style.display = 'none';
-    return;
+    totalDiv.style.display = 'none'; return;
   }
-  
-  let html = '';
-  let grandTotal = 0;
-  
+  let html = '', grandTotal = 0;
   cart.forEach(item => {
     grandTotal += item.total;
     let addonStr = item.addons.length ? ' + ' + item.addons.map(a => a.name).join(', ') : '';
-    html += `
-      <div class="cart-item" style="position:relative">
-        <button class="remove" onclick="removeItem(${item.id})">✕</button>
-        <h4>${item.name}</h4>
-        <p>${item.nights} noche(s) × $${(item.basePrice).toLocaleString()}${addonStr}</p>
-        <p style="color:var(--r);font-weight:600;margin-top:.2rem">$${item.total.toLocaleString()}</p>
-      </div>`;
+    html += `<div class="cart-item" style="position:relative">
+      <button class="remove" onclick="removeItem(${item.id})">✕</button>
+      <h4>${item.name}</h4><p>${item.nights} noche(s) × $${item.basePrice.toLocaleString()}${addonStr}</p>
+      <p style="color:var(--r);font-weight:600;margin-top:.2rem">$${item.total.toLocaleString()}</p></div>`;
   });
-  
   container.innerHTML = html;
   document.getElementById('totalPrice').textContent = '$' + grandTotal.toLocaleString();
   totalDiv.style.display = 'block';
 }
-
 function checkout() {
   if (cart.length === 0) return;
-  
-  let msg = 'Hola%20Cabañas%20del%20Sur,%20quiero%20reservar:%0A%0A';
-  let total = 0;
-  
+  let msg = 'Hola%20Cabañas%20del%20Sur,%20quiero%20reservar:%0A%0A', total = 0;
   cart.forEach((item, i) => {
     total += item.total;
     let addonStr = item.addons.length ? ' + ' + item.addons.map(a => a.name).join(' + ') : '';
-    msg += (i+1) + '.%20' + item.name + '%20(' + item.nights + '%20noche(s))' + addonStr + '%20-%20$' + item.total.toLocaleString() + '%0A';
+    msg += (i+1) + '.%20' + item.name + '%20(1%20noche)' + addonStr + '%20-%20$' + item.total.toLocaleString() + '%0A';
   });
-  
   msg += '%0A💵%20Total:%20$' + total.toLocaleString() + '%0A%0A📅%20Fechas%20a%20confirmar';
-  
   window.open('https://wa.me/56975177638?text=' + msg, '_blank');
-  cart = [];
-  renderCart();
-  toggleCart();
+  cart = []; renderCart(); toggleCart();
 }
-
 function toggleCart() {
   document.getElementById('cartPanel').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
+
+// ─── LOGIN ───
+function toggleLogin() {
+  const m = document.getElementById('loginModal');
+  const o = document.getElementById('loginOverlay');
+  const e = document.getElementById('loginError');
+  m.style.display = m.style.display === 'block' ? 'none' : 'block';
+  o.classList.toggle('open');
+  e.style.display = 'none';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  if (u === 'demo' && p === 'demo123') {
+    isAdmin = true;
+    sessionStorage.setItem('tienda_admin', 'true');
+    sessionStorage.setItem('tienda_user', u);
+    toggleLogin();
+    updateAdminUI();
+    renderProducts();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+function logout() {
+  isAdmin = false;
+  sessionStorage.removeItem('tienda_admin');
+  sessionStorage.removeItem('tienda_user');
+  updateAdminUI();
+  renderProducts();
+}
+function updateAdminUI() {
+  const btn = document.getElementById('loginBtn');
+  const bar = document.getElementById('adminBar');
+  const user = sessionStorage.getItem('tienda_user');
+  if (isAdmin) {
+    btn.textContent = '👤 ' + user;
+    btn.classList.add('admin');
+    bar.classList.add('show');
+  } else {
+    btn.textContent = '🔐 Admin';
+    btn.classList.remove('admin');
+    bar.classList.remove('show');
+  }
+}
+
+// ─── ADMIN EDIT ───
+function openEdit(id) {
+  const c = cabanas.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('editId').value = c.id;
+  document.getElementById('editName').value = c.name;
+  document.getElementById('editPrice').value = c.price;
+  document.getElementById('editDesc').value = c.desc;
+  document.getElementById('editEmoji').value = c.emoji;
+  document.getElementById('editTags').value = c.tags;
+  document.getElementById('editAddons').value = c.addons || '';
+  document.getElementById('editModal').style.display = 'block';
+  document.getElementById('editOverlay').classList.add('open');
+}
+function closeEdit() {
+  document.getElementById('editModal').style.display = 'none';
+  document.getElementById('editOverlay').classList.remove('open');
+}
+function saveEdit() {
+  const id = parseInt(document.getElementById('editId').value);
+  const idx = cabanas.findIndex(x => x.id === id);
+  if (idx === -1 && id !== 0) return;
+  const data = {
+    id: id || Date.now(),
+    name: document.getElementById('editName').value || 'Cabaña',
+    price: parseInt(document.getElementById('editPrice').value) || 50000,
+    desc: document.getElementById('editDesc').value || '',
+    emoji: document.getElementById('editEmoji').value || '🏡',
+    tags: document.getElementById('editTags').value || '',
+    addons: document.getElementById('editAddons').value || ''
+  };
+  if (idx === -1) cabanas.push(data);
+  else cabanas[idx] = data;
+  saveCabanas(cabanas);
+  closeEdit();
+  renderProducts();
+}
+function deleteCabana() {
+  const id = parseInt(document.getElementById('editId').value);
+  if (!confirm('¿Eliminar esta cabaña?')) return;
+  cabanas = cabanas.filter(x => x.id !== id);
+  saveCabanas(cabanas);
+  closeEdit();
+  renderProducts();
+}
+function addNewCabana() {
+  document.getElementById('editId').value = '0';
+  document.getElementById('editName').value = '';
+  document.getElementById('editPrice').value = '50000';
+  document.getElementById('editDesc').value = '';
+  document.getElementById('editEmoji').value = '🏡';
+  document.getElementById('editTags').value = '';
+  document.getElementById('editAddons').value = '';
+  document.getElementById('editModal').style.display = 'block';
+  document.getElementById('editOverlay').classList.add('open');
+}
+
+// ─── INIT ───
+updateAdminUI();
+renderProducts();
 </script>
 </body>
 </html>
