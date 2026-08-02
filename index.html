@@ -49,7 +49,22 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
 .products{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem}
 .card{background:var(--s);border:1px solid var(--b);border-radius:14px;overflow:hidden;transition:var(--tr);position:relative}
 .card:hover{transform:translateY(-3px);border-color:var(--ba);box-shadow:0 8px 25px rgba(0,0,0,.5)}
-.card-img{height:180px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:4rem;border-bottom:1px solid var(--b)}
+.card-img{height:180px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:4rem;border-bottom:1px solid var(--b);position:relative;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.card-img .img-nav{position:absolute;bottom:.4rem;left:50%;transform:translateX(-50%);display:flex;gap:.3rem;z-index:3}
+.card-img .img-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);transition:all .2s}
+.card-img .img-dot.active{background:#fff;width:8px;height:8px}
+.card-img .img-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;font-size:.9rem;width:28px;height:28px;border-radius:50%;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}
+.card-img .img-arrow:hover{background:rgba(0,0,0,.6)}
+.card-img .img-arrow.prev{left:.3rem}
+.card-img .img-arrow.next{right:.3rem}
+.upload-zone{border:2px dashed var(--b);border-radius:10px;padding:1rem;text-align:center;margin:.8rem 0;cursor:pointer;transition:var(--tr)}
+.upload-zone:hover{border-color:var(--r);background:rgba(13,148,136,.05)}
+.upload-zone p{font-size:.6rem;color:var(--t3)}
+.upload-zone input{display:none}
+.img-previews{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
+.img-previews .thumb{width:50px;height:50px;border-radius:6px;object-fit:cover;border:1px solid var(--b);position:relative}
+.img-previews .thumb-remove{position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;border:none;width:16px;height:16px;border-radius:50%;font-size:.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .card-body{padding:1.2rem}
 .card-body h3{font-size:.8rem;font-weight:700;font-family:var(--fd);margin-bottom:.3rem}
 .card-body p{font-size:.68rem;color:var(--t3);margin-bottom:.6rem}
@@ -205,6 +220,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-grad
   <input type="text" id="editTags" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem">
   <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">Add-ons (nombre:precio;nombre:precio)</label>
   <input type="text" id="editAddons" style="width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:.6rem;color:var(--t);font-family:var(--fb);font-size:.7rem" placeholder="Desayuno:5000;Tinaja:8000">
+  <label style="display:block;font-size:.65rem;color:var(--t3);margin-bottom:.2rem;margin-top:.7rem">📸 Imágenes</label>
+  <div class="upload-zone" onclick="document.getElementById('imgUpload').click()">
+    <p>🖼️ Click para subir imágenes (múltiples)</p>
+    <input type="file" id="imgUpload" accept="image/*" multiple onchange="handleImages(event)">
+  </div>
+  <div class="img-previews" id="imgPreviews"></div>
+  <input type="hidden" id="editImages" value="">
   <button class="bt bt-p" style="width:100%;justify-content:center;margin-top:1rem" onclick="saveEdit()">💾 Guardar cambios</button>
   <button class="bt bt-o" style="width:100%;justify-content:center;margin-top:.4rem;color:#EF4444;border-color:rgba(239,68,68,.3)" onclick="deleteCabana()">🗑️ Eliminar cabaña</button>
 </div>
@@ -246,7 +268,7 @@ let isAdmin = sessionStorage.getItem('tienda_admin') === 'true';
 function renderProducts() {
   const container = document.getElementById('products');
   let html = '';
-  cabanas.forEach(c => {
+  cabanas.forEach((c, ci) => {
     const tags = c.tags.split(',').map(t => `<span>${t.trim()}</span>`).join('');
     let addonsHtml = '';
     if (c.addons) {
@@ -255,10 +277,21 @@ function renderProducts() {
         if (name && price) addonsHtml += `<label><input type="checkbox" data-addon="${name.trim()}" data-price="${price.trim()}"> ${name.trim()} +$${parseInt(price).toLocaleString()}</label>`;
       });
     }
+    const images = c.images || [];
+    let imgHtml;
+    if (images.length > 0) {
+      const navHtml = images.length > 1 ? `
+        <div class="img-nav">${images.map((_, i) => `<div class="img-dot${i===0?' active':''}" onclick="event.stopPropagation();switchImg(${ci}, ${i})"></div>`).join('')}</div>
+        <button class="img-arrow prev" onclick="event.stopPropagation();prevImg(${ci})">‹</button>
+        <button class="img-arrow next" onclick="event.stopPropagation();nextImg(${ci})">›</button>` : '';
+      imgHtml = `<img src="${images[0]}" alt="${c.name}" loading="lazy">${navHtml}`;
+    } else {
+      imgHtml = c.emoji;
+    }
     html += `
       <div class="card" data-id="${c.id}">
         ${isAdmin ? `<button class="edit-btn show" onclick="openEdit(${c.id})">✏️ Editar</button>` : ''}
-        <div class="card-img">${c.emoji}</div>
+        <div class="card-img" data-cidx="${ci}" data-imgidx="0">${imgHtml}</div>
         <div class="card-body">
           <h3>${c.name}</h3>
           <p>${c.desc}</p>
@@ -397,12 +430,16 @@ function openEdit(id) {
   document.getElementById('editEmoji').value = c.emoji;
   document.getElementById('editTags').value = c.tags;
   document.getElementById('editAddons').value = c.addons || '';
+  tempImages = [...(c.images || [])];
+  renderPreviews();
   document.getElementById('editModal').style.display = 'block';
   document.getElementById('editOverlay').classList.add('open');
 }
 function closeEdit() {
   document.getElementById('editModal').style.display = 'none';
   document.getElementById('editOverlay').classList.remove('open');
+  tempImages = [];
+  document.getElementById('imgPreviews').innerHTML = '';
 }
 function saveEdit() {
   const id = parseInt(document.getElementById('editId').value);
@@ -415,7 +452,8 @@ function saveEdit() {
     desc: document.getElementById('editDesc').value || '',
     emoji: document.getElementById('editEmoji').value || '🏡',
     tags: document.getElementById('editTags').value || '',
-    addons: document.getElementById('editAddons').value || ''
+    addons: document.getElementById('editAddons').value || '',
+    images: [...tempImages]
   };
   if (idx === -1) cabanas.push(data);
   else cabanas[idx] = data;
@@ -443,7 +481,57 @@ function addNewCabana() {
   document.getElementById('editOverlay').classList.add('open');
 }
 
-// ─── INIT ───
+// ─── IMAGES ───
+let tempImages = [];
+function handleImages(event) {
+  const files = event.target.files;
+  if (!files.length) return;
+  const container = document.getElementById('imgPreviews');
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      tempImages.push(e.target.result);
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  event.target.value = '';
+}
+function renderPreviews() {
+  const container = document.getElementById('imgPreviews');
+  container.innerHTML = tempImages.map((img, i) => `
+    <div style="position:relative;display:inline-block">
+      <img src="${img}" class="thumb">
+      <button class="thumb-remove" onclick="removePreview(${i})">✕</button>
+    </div>`).join('');
+}
+function removePreview(i) { tempImages.splice(i, 1); renderPreviews(); }
+
+function switchImg(cabanaIdx, imgIdx) {
+  const el = document.querySelector(`.card-img[data-cidx="${cabanaIdx}"]`);
+  if (!el) return;
+  const images = cabanas[cabanaIdx].images || [];
+  if (!images.length) return;
+  el.querySelector('img').src = images[imgIdx];
+  el.dataset.imgidx = imgIdx;
+  el.querySelectorAll('.img-dot').forEach((d, i) => d.classList.toggle('active', i === imgIdx));
+}
+function prevImg(ci) {
+  const images = cabanas[ci].images || [];
+  if (!images.length) return;
+  const el = document.querySelector(`.card-img[data-cidx="${ci}"]`);
+  let idx = parseInt(el.dataset.imgidx) - 1;
+  if (idx < 0) idx = images.length - 1;
+  switchImg(ci, idx);
+}
+function nextImg(ci) {
+  const images = cabanas[ci].images || [];
+  if (!images.length) return;
+  const el = document.querySelector(`.card-img[data-cidx="${ci}"]`);
+  let idx = parseInt(el.dataset.imgidx) + 1;
+  if (idx >= images.length) idx = 0;
+  switchImg(ci, idx);
+}
 updateAdminUI();
 renderProducts();
 </script>
