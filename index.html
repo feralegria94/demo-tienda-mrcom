@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A1628">
+<meta name="description" content="Cabañas del Sur — Reserva tu cabaña en Chiloé online. Elige fechas, agrega servicios y paga por WhatsApp.">
+<meta property="og:title" content="Cabañas del Sur · Reserva tu cabaña en Chiloé">
+<meta property="og:description" content="Elige cabaña, fechas, servicios extra. Checkout por WhatsApp.">
+<title>Cabañas del Sur · Reserva online de cabañas en Chiloé</title>
+<style>
+:root{--r:#0D9488;--rd:#0F766E;--rg:rgba(13,148,136,0.3);--o:#F59E0B;--g:#D4A843;--bg:#0A1628;--bg2:#0E1D35;--s:#112240;--s2:#162D50;--t:#F1F5F9;--t2:#B0C4DE;--t3:#6B8DB5;--t4:#3A5278;--b:rgba(255,255,255,0.05);--bh:rgba(255,255,255,0.1);--ba:rgba(13,148,136,0.2);--gp:linear-gradient(135deg,#0D9488,#0F766E);--gh:linear-gradient(135deg,#0D9488 0%,#F59E0B 100%);--fb:'Inter',system-ui,sans-serif;--fd:'Outfit',sans-serif;--fm:'JetBrains Mono',monospace;--tr:all .3s cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(13,148,136,.06) 0%,transparent 55%),radial-gradient(ellipse 30% 30% at 80% 90%,rgba(245,158,11,.04) 0%,transparent 45%);pointer-events:none}
+
+.n{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--b);height:56px;display:flex;align-items:center}
+.nc{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1100px;margin:0 auto;padding:0 1.5rem}
+.nl{font-size:1rem;font-weight:800;color:var(--t);text-decoration:none;font-family:var(--fd);letter-spacing:-.3px}
+.nl span{background:var(--gh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cart-btn{position:relative;background:var(--s);border:1px solid var(--b);border-radius:8px;padding:.4rem .8rem;color:var(--t);font-size:.72rem;font-weight:600;cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:.4rem}
+.cart-btn:hover{background:var(--s2);border-color:var(--ba)}
+.cart-count{background:var(--r);color:#fff;font-size:.55rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+.sc{padding:5rem 1.5rem 2rem;max-width:1000px;margin:0 auto}
+.hero{padding:90px 1.5rem 2rem;text-align:center;max-width:700px;margin:0 auto}
+.hero h1{font-size:clamp(1.5rem,4.5vw,2.5rem);font-weight:900;font-family:var(--fd);margin-bottom:.5rem}
+.hero h1 em{font-style:normal;background:var(--gh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--t3);font-size:.85rem;margin-bottom:1.5rem}
+
+.bt{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.2rem;border-radius:10px;font-size:.72rem;font-weight:600;text-decoration:none;transition:var(--tr);border:none;cursor:pointer;font-family:var(--fb)}
+.bt-p{background:var(--gp);color:#fff;box-shadow:0 4px 18px var(--rg)}.bt-p:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(13,148,136,.35)}
+.bt-o{background:transparent;border:1px solid var(--bh);color:var(--t)}.bt-o:hover{background:var(--s);border-color:var(--t4)}
+.bt-lg{padding:.8rem 2rem;font-size:.9rem}
+
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem}
+.card{background:var(--s);border:1px solid var(--b);border-radius:14px;overflow:hidden;transition:var(--tr);position:relative}
+.card:hover{transform:translateY(-3px);border-color:var(--ba);box-shadow:0 8px 25px rgba(0,0,0,.5)}
+.card-img{height:180px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:4rem;border-bottom:1px solid var(--b)}
+.card-body{padding:1.2rem}
+.card-body h3{font-size:.8rem;font-weight:700;font-family:var(--fd);margin-bottom:.3rem}
+.card-body p{font-size:.68rem;color:var(--t3);margin-bottom:.6rem}
+.card-body .extras{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.6rem}
+.card-body .extras span{font-size:.55rem;background:var(--bg2);padding:.15rem .4rem;border-radius:4px;color:var(--t2)}
+.card-body .price{font-size:.85rem;font-weight:900;font-family:var(--fm);background:var(--gh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.6rem}
+.card-body .price small{font-size:.55rem;color:var(--t3);-webkit-text-fill-color:var(--t3);font-weight:400}
+.card-addons{margin-bottom:.8rem}
+.card-addons label{display:flex;align-items:center;gap:.3rem;font-size:.6rem;color:var(--t3);cursor:pointer;margin-bottom:.2rem}
+.card-addons input[type=checkbox]{accent-color:var(--r)}
+.card-body .bt{width:100%;justify-content:center}
+
+.cart-panel{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:rgba(14,29,53,.98);border-left:1px solid var(--b);z-index:200;transition:right .3s ease;padding:1.5rem;overflow-y:auto;display:flex;flex-direction:column}
+.cart-panel.open{right:0}
+.cart-panel h3{font-size:.85rem;font-weight:700;font-family:var(--fd);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.cart-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--t3);font-size:1.2rem;cursor:pointer}
+.cart-empty{text-align:center;color:var(--t4);font-size:.7rem;margin-top:3rem}
+.cart-item{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:.8rem;margin-bottom:.5rem}
+.cart-item h4{font-size:.7rem;font-weight:600;margin-bottom:.2rem}
+.cart-item p{font-size:.6rem;color:var(--t3)}
+.cart-item .remove{position:absolute;top:.5rem;right:.5rem;background:none;border:none;color:var(--t4);cursor:pointer;font-size:.9rem}
+.cart-total{margin-top:auto;border-top:1px solid var(--b);padding-top:1rem;text-align:right}
+.cart-total .total-label{font-size:.65rem;color:var(--t3)}
+.cart-total .total-price{font-size:1.3rem;font-weight:900;font-family:var(--fm);background:var(--gh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cart-total .bt{width:100%;justify-content:center;margin-top:.8rem}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none}
+.overlay.open{display:block}
+
+.ft{border-top:1px solid var(--b);background:var(--bg);padding:3rem 1.5rem 1.5rem;text-align:center}
+.ft p{font-size:.65rem;color:var(--t4)}.ft p+p{margin-top:.2rem}.ft a{color:var(--r);text-decoration:none}
+
+@media(max-width:768px){.products{grid-template-columns:repeat(2,1fr)}.cart-panel{width:100%;right:-100%}}
+@media(max-width:500px){.products{grid-template-columns:1fr}.hero h1{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<nav class="n">
+  <div class="nc">
+    <a href="#" class="nl">🏡 Cabañas <span>del Sur</span></a>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Reservas <span class="cart-count" id="cartCount">0</span></button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Reservá tu cabaña<br><em>en Chiloé</em></h1>
+  <p>Elegí cabaña, fechas, servicios extra. Checkout por WhatsApp. Sin plataformas, sin comisiones.</p>
+</div>
+
+<section class="sc" style="padding-top:0">
+  <div class="products" id="products">
+
+    <div class="card" data-id="1" data-name="Cabaña Estandar" data-price="45000">
+      <div class="card-img">🏡</div>
+      <div class="card-body">
+        <h3>Cabaña Estándar</h3>
+        <p>1 habitación, cocina, baño privado. Vista al jardín.</p>
+        <div class="extras"><span>🛏️ 2 pers</span><span>🍳 Cocina</span><span>📶 WiFi</span></div>
+        <div class="price">$45.000 <small>/ noche</small></div>
+        <div class="card-addons">
+          <label><input type="checkbox" data-addon="Desayuno" data-price="5000"> 🍳 Desayuno +$5.000</label>
+          <label><input type="checkbox" data-addon="Tinaja" data-price="8000"> 🛁 Tinaja +$8.000</label>
+        </div>
+        <button class="bt bt-p" onclick="addToCart(this)">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="card" data-id="2" data-name="Cabaña Pareja" data-price="59000">
+      <div class="card-img">💑</div>
+      <div class="card-body">
+        <h3>Cabaña Pareja</h3>
+        <p>Cama king, terraza privada, tinaja incluida. La más pedida.</p>
+        <div class="extras"><span>🛏️ 2 pers</span><span>🛁 Tinaja</span><span>🌅 Terraza</span></div>
+        <div class="price">$59.000 <small>/ noche</small></div>
+        <div class="card-addons">
+          <label><input type="checkbox" data-addon="Desayuno" data-price="5000"> 🍳 Desayuno +$5.000</label>
+          <label><input type="checkbox" data-addon="Botella Vino" data-price="12000"> 🍷 Vino reserva +$12.000</label>
+        </div>
+        <button class="bt bt-p" onclick="addToCart(this)">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="card" data-id="3" data-name="Cabaña Familiar" data-price="75000">
+      <div class="card-img">👨‍👩‍👧‍👦</div>
+      <div class="card-body">
+        <h3>Cabaña Familiar</h3>
+        <p>2 habitaciones, living grande, terraza. Hasta 5 personas.</p>
+        <div class="extras"><span>🛏️ 5 pers</span><span>🍳 Cocina</span><span>📺 TV</span></div>
+        <div class="price">$75.000 <small>/ noche</small></div>
+        <div class="card-addons">
+          <label><input type="checkbox" data-addon="Desayuno x2" data-price="8000"> 🍳 Desayuno familiar +$8.000</label>
+          <label><input type="checkbox" data-addon="Limpieza extra" data-price="10000"> 🧹 Limpieza extra +$10.000</label>
+        </div>
+        <button class="bt bt-p" onclick="addToCart(this)">Agregar al carrito</button>
+      </div>
+    </div>
+
+    <div class="card" data-id="4" data-name="Cabaña Premium" data-price="95000">
+      <div class="card-img">🌟</div>
+      <div class="card-body">
+        <h3>Cabaña Premium</h3>
+        <p>2 pisos, ventanal al mar, chimenea. La mejor experiencia.</p>
+        <div class="extras"><span>🛏️ 4 pers</span><span>🔥 Chimenea</span><span>🌊 Vista mar</span></div>
+        <div class="price">$95.000 <small>/ noche</small></div>
+        <div class="card-addons">
+          <label><input type="checkbox" data-addon="Desayuno premium" data-price="10000"> 🥐 Desayuno premium +$10.000</label>
+          <label><input type="checkbox" data-addon="Masaje" data-price="25000"> 💆 Masaje en cabaña +$25.000</label>
+        </div>
+        <button class="bt bt-p" onclick="addToCart(this)">Agregar al carrito</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="ft">
+  <p>🏡 Cabañas del Sur · Quellón, Chiloé · +56 9 7517 7638</p>
+  <p>Sitio web creado por <a href="https://mr.mrcomsoluciones.cl">MR.COM Soluciones</a> — Plan Tienda Online — Pago único desde $179.400</p>
+</footer>
+
+<!-- CART PANEL -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <button class="cart-close" onclick="toggleCart()">✕</button>
+  <h3>🛒 Tu reserva</h3>
+  <div id="cartItems"><div class="cart-empty">Tu carrito está vacío.<br>Agregá cabañas para reservar.</div></div>
+  <div class="cart-total" id="cartTotal" style="display:none">
+    <div class="total-label">Total estimado</div>
+    <div class="total-price" id="totalPrice">$0</div>
+    <button class="bt bt-p bt-lg" onclick="checkout()">Reservar por WhatsApp 💬</button>
+    <p style="font-size:.55rem;color:var(--t4);margin-top:.4rem">Al hacer clic se abre WhatsApp con el detalle de tu reserva.</p>
+  </div>
+</div>
+
+<script>
+let cart = [];
+let totalNights = 1;
+
+function addToCart(btn) {
+  const card = btn.closest('.card');
+  const id = card.dataset.id;
+  const name = card.dataset.name;
+  const basePrice = parseInt(card.dataset.price);
+  
+  const addons = [];
+  card.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
+    addons.push({ name: cb.dataset.addon, price: parseInt(cb.dataset.price) });
+    cb.checked = false;
+  });
+  
+  const addonTotal = addons.reduce((s, a) => s + a.price, 0);
+  
+  cart.push({
+    id: Date.now(),
+    cabanaId: id,
+    name: name,
+    basePrice: basePrice,
+    addons: addons,
+    addonTotal: addonTotal,
+    nights: totalNights,
+    total: (basePrice + addonTotal) * totalNights
+  });
+  
+  renderCart();
+  btn.textContent = '✅ Agregado';
+  setTimeout(() => btn.textContent = 'Agregar al carrito', 1200);
+}
+
+function removeItem(id) {
+  cart = cart.filter(item => item.id !== id);
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const totalDiv = document.getElementById('cartTotal');
+  const countEl = document.getElementById('cartCount');
+  
+  countEl.textContent = cart.length;
+  
+  if (cart.length === 0) {
+    container.innerHTML = '<div class="cart-empty">Tu carrito está vacío.<br>Agregá cabañas para reservar.</div>';
+    totalDiv.style.display = 'none';
+    return;
+  }
+  
+  let html = '';
+  let grandTotal = 0;
+  
+  cart.forEach(item => {
+    grandTotal += item.total;
+    let addonStr = item.addons.length ? ' + ' + item.addons.map(a => a.name).join(', ') : '';
+    html += `
+      <div class="cart-item" style="position:relative">
+        <button class="remove" onclick="removeItem(${item.id})">✕</button>
+        <h4>${item.name}</h4>
+        <p>${item.nights} noche(s) × $${(item.basePrice).toLocaleString()}${addonStr}</p>
+        <p style="color:var(--r);font-weight:600;margin-top:.2rem">$${item.total.toLocaleString()}</p>
+      </div>`;
+  });
+  
+  container.innerHTML = html;
+  document.getElementById('totalPrice').textContent = '$' + grandTotal.toLocaleString();
+  totalDiv.style.display = 'block';
+}
+
+function checkout() {
+  if (cart.length === 0) return;
+  
+  let msg = 'Hola%20Cabañas%20del%20Sur,%20quiero%20reservar:%0A%0A';
+  let total = 0;
+  
+  cart.forEach((item, i) => {
+    total += item.total;
+    let addonStr = item.addons.length ? ' + ' + item.addons.map(a => a.name).join(' + ') : '';
+    msg += (i+1) + '.%20' + item.name + '%20(' + item.nights + '%20noche(s))' + addonStr + '%20-%20$' + item.total.toLocaleString() + '%0A';
+  });
+  
+  msg += '%0A💵%20Total:%20$' + total.toLocaleString() + '%0A%0A📅%20Fechas%20a%20confirmar';
+  
+  window.open('https://wa.me/56975177638?text=' + msg, '_blank');
+  cart = [];
+  renderCart();
+  toggleCart();
+}
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+</script>
+</body>
+</html>
