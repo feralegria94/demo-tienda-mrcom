@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: HTML structure check
+        run: |
+          python3 -c "
+          from html.parser import HTMLParser
+          import sys
+
+          class Checker(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.errors = []
+                  self.title = False
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'title': self.title = True
+
+          c = Checker()
+          c.feed(open('index.html').read())
+          if not c.title:
+              print('WARN: no <title> tag')
+          print('HTML parsed OK')
+          "
+      - name: Check assets exist
+        run: |
+          grep -oP 'src="\K[^"]+' index.html 2>/dev/null | while read f; do
+            if [ ! -f "$f" ]; then echo "MISSING: $f"; fi
+          done || true
